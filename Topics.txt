@@ -7,27 +7,820 @@ Remaining(*) , Working Progress(?) , Just Started(!) , Completed(.)
 
 
 
-#1. Classes(?),
+#1. Classes(.),
 
-#2. Interfaces(?),
+Ex1 : 
 
-#3. Generics(!),
+class Person {
+    name: string;
+    
+    constructor(name: string) {
+        this.name = name;
+    }
+}
 
-#4. Type Aliases(?),
+class Employee extends Person {
+    empCode: number;
+    
+    constructor(empcode: number, name:string) {
+        super(name);
+        this.empCode = empcode;
+    }
+    
+    displayName():void {
+        console.log("Name = " + this.name +  ", Employee Code = " + this.empCode);
+    }
+}
+
+let emp = new Employee(100, "Bill");
+emp.displayName(); // Name = Bill, Employee Code = 100
+
+
+Ex2 :
+
+class Car {
+    name: string;
+        
+    constructor(name: string) {
+        this.name = name;
+    }
+    
+    run(speed:number = 0) {
+        console.log("A " + this.name + " is moving at " + speed + " mph!");
+    }
+}
+
+class Mercedes extends Car {
+    
+    constructor(name: string) {
+        super(name);
+    }
+    
+    run(speed = 150) {
+        console.log('A Mercedes started')
+        super.run(speed);
+    }
+}
+
+class Honda extends Car {
+    
+    constructor(name: string) {
+        super(name);
+    }
+    
+    run(speed = 100) {
+        console.log('A Honda started')
+        super.run(speed);
+    }
+}
+
+let mercObj = new Mercedes("Mercedes-Benz GLA");
+let hondaObj = new Honda("Honda City")
+
+mercObj.run();  // A Mercedes started A Mercedes-Benz GLA is moving at 150 mph!
+hondaObj.run(); // A Honda started A Honda City is moving at 100 mph!
+
+
+Ex3 Abstract Class : 
+
+abstract class Person {
+    abstract name: string;
+
+    display(): void{
+        console.log(this.name);
+    }
+}
+
+class Employee extends Person { 
+    name: string;
+    empCode: number;
+    
+    
+    +constructor(name: string, code: number) { 
+        super(); // must call super()
+        
+        this.empCode = code;
+        this.name = name;
+    }
+}
+
+let emp: Person = new Employee("James", 100);
+emp.display(); //James
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+#2. Interfaces(.),
+
+Ex1 :
+
+interface IPerson {
+    name: string;
+    display():void;
+}
+
+interface IEmployee {
+    empCode: number;
+}
+
+class Employee implements IPerson, IEmployee {
+    empCode: number;
+    name: string;
+    
+    constructor(empcode: number, name:string) {
+        this.empCode = empcode;
+        this.name = name;
+    }
+    
+    display(): void {
+        console.log("Name = " + this.name +  ", Employee Code = " + this.empCode);
+    }
+}
+
+let per:IPerson = new Employee(100, "Bill");
+per.display(); // Name = Bill, Employee Code = 100
+
+let emp:IEmployee = new Employee(100, "Bill");
+emp.display(); //Compiler Error: Property 'display' does not exist on type 'IEmployee'
+
+Ex2 function in interface : 
+
+interface KeyValueProcessor
+{
+    (key: number, value: string): void;
+};
+
+function addKeyValue(key:number, value:string):void { 
+    console.log('addKeyValue: key = ' + key + ', value = ' + value)
+}
+
+function updateKeyValue(key: number, value:string):void { 
+    console.log('updateKeyValue: key = '+ key + ', value = ' + value)
+}
+    
+let kvp: KeyValueProcessor = addKeyValue;
+kvp(1, 'Bill'); //Output: addKeyValue: key = 1, value = Bill 
+
+kvp = updateKeyValue;
+kvp(2, 'Steve'); //Output: updateKeyValue: key = 2, value = Steve 
+
+Ex3 Array in interface : 
+
+interface NumList {
+    [index:number]:number
+}
+
+let numArr: NumList = [1, 2, 3];
+numArr[0];
+numArr[1];
+
+interface IStringList {
+    [index:string]:string
+}
+
+let strArr : IStringList = {};
+strArr["TS"] = "TypeScript";
+strArr["JS"] = "JavaScript";
+
+Ex4 Optional & Read only Property
+
+interface IEmployee {
+    empCode: number;
+    readonly empName: string;
+    empDept?:string;
+}
+
+let empObj1:IEmployee = {   // OK
+    empCode:1,
+    empName:"Steve"
+}
+
+let empObj2:IEmployee = {    // OK
+    empCode:1,
+    empDept:"IT"
+}
+
+empObj1.empName="sarthak" // Compiler Error
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+#3. Generics(.),
+
+Ex1 :
+const isObj = <T>(arg: T): boolean => {
+    return (typeof arg === 'object' && !Array.isArray(arg) && arg !== null)
+}
+
+console.log(isObj(true))
+console.log(isObj('sd'))
+console.log(isObj([1, 2, 3]))
+console.log(isObj({ name: 'sd' }))
+console.log(isObj(null))
+
+//OT:
+//false
+//false
+//false
+//true
+//false
+
+Ex2 Array : 
+
+let studentListsG:Array<Itf1> = [
+    {name: "Prashant", age:20, phone:2131231,tx:"interface1"},
+    {name: "Shree", age:27, phone:274235,tx:"interface1"}
+]
+
+function GetstudentDataItfG(students:Array<Itf1>) {
+    students.forEach(element => {
+        console.log("name:" + element.name + "age:" + element.age + "phone:" +  element.phone + "interface:" + element.tx)
+    });
+}
+
+GetstudentDataItfG(studentListsG);
+
+/**
+OT:
+name:Prashantage:20phone:2131231interface:interface1
+name:Shreeage:27phone:274235interface:interface1
+**/
+
+Ex3: Constraints
+class Person {
+    firstName: string;
+    lastName: string;
+
+    constructor(fname:string,  lname:string) { 
+        this.firstName = fname;
+        this.lastName = lname;
+    }
+}
+
+function display<T extends Person>(per: T): void {
+    console.log(`${ per.firstName} ${per.lastName}` );
+}
+var per = new Person("Bill", "Gates");
+display(per); //Output: Bill Gates
+
+display("Bill Gates");//Compiler Error
+
+
+Ex4: Generic Interface as Function Type
+
+
+interface KeyValueProcessor<T, U>
+{
+    (key: T, val: U): void;
+};
+
+function processKeyPairs<T, U>(key:T, value:U):void { 
+    console.log(`processKeyPairs: key = ${key}, value = ${value}`)
+}
+
+let numKVProcessor: KeyValueProcessor<number, number> = processKeyPairs;
+numKVProcessor(1, 12345); //Output: processKeyPairs: key = 1, value = 12345 
+
+let strKVProcessor: KeyValueProcessor<number, string> = processKeyPairs;
+strKVProcessor(1, "Bill"); //Output: processKeyPairs: key = 1, value = Bill 
+
+
+Ex5 : Generic Class implements Generic Interface
+interface IKeyValueProcessor<T, U>
+{
+    process(key: T, val: U): void;
+};
+
+class kvProcessor<T, U> implements IKeyValueProcessor<T, U>
+{ 
+    process(key:T, val:U):void { 
+        console.log(`Key = ${key}, val = ${val}`);
+    }
+}
+
+let proc: IKeyValueProcessor<number, string> = new kvProcessor();
+proc.process(1, 'Bill'); //Output: key = 1, value = Bill 
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+#4. Type Aliases(.),
+
+Ex1 :
+
+type fruits = {
+        name:string,
+        color?:string,
+    }
+
+    //But When We need to add any other aliases properties then we can not extend type it has a error that duplation of type.
+
+    //type fruits = { //it will not allow.
+    //    price:number
+    //}
+
+    let f1:fruits = {
+        name:"Apple",
+    }
+
+    let f2:fruits = {
+        name:"Banana",
+        color:"Yellow"
+    }
+
+        
+1. Unions (|)        
+2. Insertions (&)        
+3. Primitives       
+4. ShortHand functions        
+5. Advanced type functions
+        
+Ex2 :
+        
+type StringsIsh = string | string[] | null | undefined;
+
+function logAllStrings(values: StringsIsh) {
+  if (values === null || typeof values === 'undefined') return;
+
+  if (typeof values === 'string') {
+    console.log(values);
+  } else {
+    values.forEach(logAllStrings);
+  }
+}
+
+logAllStrings('hello'); // Ok
+logAllStrings(['hello', 'world']); // Also Ok
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
 
 #5. Top & Bottom Types(*),
 
+-----Top types
+
+A top type (symbol: ⊤) is a type that describes any possible value allowed by the system.
+
+TypeScript provides two of these types: any and unknown.
+
+-----Bottom type: never
+
+A bottom type (symbol: ⊥) is a type that describes no possible value allowed by the system.
+
+TypeScript provides one bottom type: never.
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+
 #6. Advanced Types(*),
+
+------------------------------------------------------------------------- Utility Types --------------------------------------------------------------------------
+
+-------------------------------------------------------------------#Awaited<Type>
+
+type C = Awaited<boolean | Promise<number>>;
+    
+//type C = number | boolean
+
+-------------------------------------------------------------------#Partial<Type>
+
+interface Todo {
+  title: string;
+  description: string;
+}
+ 
+function updateTodo(todo: Todo, fieldsToUpdate: Partial<Todo>) {
+  return { ...todo, ...fieldsToUpdate };
+}
+ 
+const todo1 = {
+  title: "organize desk",
+  description: "clear clutter",
+};
+ 
+const todo2 = updateTodo(todo1, {
+  description: "throw out trash",
+});
+
+-------------------------------------------------------------------#Required<Type>
+
+interface Props {
+  a?: number;
+  b?: string;
+}
+ 
+const obj: Props = { a: 5 };
+ 
+const obj2: Required<Props> = { a: 5 };
+
+//Property 'b' is missing in type '{ a: number; }' but required in type 'Required<Props>'.
+
+-------------------------------------------------------------------#Readonly<Type>
+
+interface Todo {
+  title: string;
+}
+ 
+const todo: Readonly<Todo> = {
+  title: "Delete inactive users",
+};
+ 
+todo.title = "Hello";
+
+//Cannot assign to 'title' because it is a read-only property.
+
+-------------------------------------------------------------------#Record<Keys, Type>
+
+interface CatInfo {
+  age: number;
+  breed: string;
+}
+ 
+type CatName = "miffy" | "boris" | "mordred";
+ 
+const cats: Record<CatName, CatInfo> = {
+  miffy: { age: 10, breed: "Persian" },
+  boris: { age: 5, breed: "Maine Coon" },
+  mordred: { age: 16, breed: "British Shorthair" },
+};
+ 
+console.log(cats.boris);
+
+//{ age: 5, breed: "Maine Coon" }
+
+-------------------------------------------------------------------#Pick<Type, Keys>
+
+interface Todo {
+  title: string;
+  description: string;
+  completed: boolean;
+}
+ 
+type TodoPreview = Pick<Todo, "title" | "completed">;
+ 
+const todo: TodoPreview = {
+  title: "Clean room",
+  completed: false,
+};
+ 
+todo.description; // Error
+
+-------------------------------------------------------------------#Omit<Type, Keys>
+
+interface Todo {
+  title: string;
+  description: string;
+  completed: boolean;
+}
+ 
+type TodoPreview = Omit<Todo, "title" | "completed">;
+ 
+const todo: TodoPreview = {
+  description: "Hello world!",
+};
+ 
+todo.title; // Error
+
+-------------------------------------------------------------------#Exclude<UnionType, ExcludedMembers>
+
+type t1 = 'a' | 'b' | 'c' | 'd' ;
+
+type D1 = 'a' | 'b' ;
+
+let data : Exclude<t1,D1>;
+
+let data = 'a' ; // Error
+
+-------------------------------------------------------------------#Extract<Type, Union>
+
+type t1 = 'a' | 'b' | 'c' | 'd' ;
+
+type D1 = 'a' | 'b' | 'm' ;
+
+let data : Extract<t1,D1>; // but 'm' is not in t1 so 'm' is not Extract
+
+let data = 'a' ; // Get Output
+
+-------------------------------------------------------------------#NonNullable<Type>
+
+type T0 = NonNullable<string | number | undefined>;
+     
+//type T0 = string | number
+
+-------------------------------------------------------------------#Parameters<Type>
+
+type T1 = Parameters<(s: string) => void>;
+     
+//type T1 = [s: string]
+
+-------------------------------------------------------------------#ReturnType<Type>
+
+type T1 = ReturnType<(s: string) => void>;
+     
+//type T1 = void
+
+-------------------------------------------------------------------#ThisType<Type>
+
+type ObjectDescriptor<D, M> = {
+  data?: D;
+  methods?: M & ThisType<D & M>;
+};
+ 
+function makeObject<D, M>(desc: ObjectDescriptor<D, M>): D & M {
+  let data: object = desc.data || {};
+  let methods: object = desc.methods || {};
+  return { ...data, ...methods } as D & M;
+}
+ 
+let obj = makeObject({
+  data: { x: 0, y: 0 },
+  methods: {
+    moveBy(dx: number, dy: number) {
+      this.x += dx; // Strongly typed this
+      this.y += dy;
+    },
+  },
+});
+ 
+obj.x = 10;
+obj.y = 20;
+obj.moveBy(5, 5);
+
+-------------------------------------------------------------------#Uppercase<StringType>
+
+type A = 'one' | 'two'
+type B = Uppercase<A>
+
+let b: B = 'ONE'
+
+-------------------------------------------------------------------#Lowercase<StringType>
+
+type A = 'ONE' | 'TWO'
+type B = Lowercase<A>
+
+let b: B = 'one'
+
+
+
+////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
 
 #7. Declaration Merging(*),
 
-#8. Compiler API(*),
+The simplest, and perhaps most common, type of declaration merging is interface merging. At the most basic level, 
+the merge mechanically joins the members of both declarations into a single interface with the same name.
 
-#9. Arrays(?),
+interface Box {
+  height: number;
+  width: number;
+}
+interface Box {
+  scale: number;
+}
+let box: Box = { height: 5, width: 6, scale: 10 };
 
-#10. Functions(?),
 
-#11. Modules(?),
 
-#12. NameSpaces(*),
 
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+#9. Arrays(.),
+Ex1 : 
+
+let students:any = {
+    name:"a",
+    age:20,
+    phone:7687896567,
+}
+
+let studentList:any = [
+    {name: "Prashant", age:20, phone:2131231},
+    {name: "Shree", age:27, phone:274235}
+]
+
+studentList.push(students);
+
+ for (var index = 0; index < studentList.length; index++){
+     var element = studentList[index];
+     console.log("name:" + element.name + "age:" + element.age + "phone:" +  element.phone)
+ }
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+#10. Functions(.),
+
+Ex1 Function Overloading : 
+
+function add(a:string, b:string):string;
+
+function add(a:number, b:number): number;
+
+function add(a: any, b:any): any {
+    return a + b;
+}
+
+add("Hello ", "Steve"); // returns "Hello Steve" 
+add(10, 20); // returns 30 
+
+Ex2 rest parameters  :
+
+function GetDataByRest(...nums: Number[]){
+    nums.forEach(element => {
+        console.log(element)    
+    });
+}
+
+GetDataByRest(1,2,3,4,5,6);
+
+Ex3 Default parameters :
+
+function DefaultPrm(info:string = "Hello...") {
+    console.log(info);    
+}
+
+DefaultPrm("Hello Sarthak...")
+
+Ex3 Anonymous & Lambda Function :
+
+//Anonymous
+
+let Data = function(Lname:string,Fname:string){
+    return Fname + "..." + Lname;
+}
+
+console.log(Data("Dhaduk","Sarthak"));
+
+//Lambda
+
+let Data2 = (Lname:string,Fname:string) => {return Lname + "..." + Fname;}
+
+console.log(Data2("Dhaduk","Sarthak"));
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+#11. Modules(.),
+
+Ex1:
+
+//Filename : classes.ts
+export default class stInfo {
+
+    constructor(protected _fname:string,protected _lname:string) {
+    }
+
+    classData():string {
+        return this._fname + " " + this._lname;   
+    }
+}
+
+//Any File :
+
+import stInfo from "./classes";
+
+Ex2:
+
+//Filename : classes.ts
+class stInfo {
+
+    constructor(protected _fname:string,protected _lname:string) {
+    }
+
+    classData():string {
+        return this._fname + " " + this._lname;   
+    }
+}
+
+export { stInfo }
+
+//Any File :
+
+import { stInfo } from "./classes";
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+////////any & unknown datatype
+
+let un:unknown = "sarthak"
+let an:any = "sarthak"
+
+let str:string;
+
+str = an;
+console.log(str);// OT : sarthak
+
+// str = un ;  // Err : type unknown can not assignable to string type var..
+// console.log(str); // Err
+
+if(typeof un === "string"){
+    str = un ;
+    console.log(str); // OT : sarthak
+}
+
+////////never datatype
+
+let err:string = "404";
+
+function sayHi(): void { 
+    console.log('Hi!')
+}
+
+let speech: void = sayHi();
+console.log(speech); // undefined
+
+
+function throwError(errorMsg: string): never { 
+    throw new Error(errorMsg); 
+} 
+
+console.log(throwError(err));

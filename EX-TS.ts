@@ -1,13 +1,13 @@
 import stInfo from "./classes";
 import Itf1 from "./Interface";
 
-let students = {
+let students:any = {
     name:"a",
     age:20,
     phone:7687896567,
 }
 
-let studentList = [
+let studentList:any = [
     {name: "Prashant", age:20, phone:2131231},
     {name: "Shree", age:27, phone:274235}
 ]
